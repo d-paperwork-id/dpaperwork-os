@@ -49,3 +49,16 @@ export const verification = pgTable("verification", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+export const workspace = pgTable("workspace", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .unique()
+    .references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  industry: text("industry").notNull(),
+  website: text("website"),
+  about: text("about").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});

@@ -16,6 +16,7 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
+    callbackURL: "/onboarding",
     sendVerificationEmail: async ({ user, url }) => {
       const resend = new Resend(process.env.RESEND_API_KEY!);
       const html = await render(React.createElement(VerificationEmail, { url }));

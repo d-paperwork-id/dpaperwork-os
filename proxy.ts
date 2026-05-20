@@ -25,6 +25,19 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/verify-email", request.url));
   }
 
+  if (session && session.user.emailVerified) {
+    const hasWorkspace =
+      request.cookies.get("workspace_created")?.value === "1";
+
+    if (pathname.startsWith("/dashboard") && !hasWorkspace) {
+      return NextResponse.redirect(new URL("/onboarding", request.url));
+    }
+
+    if (pathname.startsWith("/onboarding") && hasWorkspace) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+  }
+
   return NextResponse.next();
 }
 
