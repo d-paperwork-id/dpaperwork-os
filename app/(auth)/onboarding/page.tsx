@@ -3,6 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 type FormData = {
   name: string;
@@ -57,6 +61,11 @@ export default function OnboardingPage() {
   const mutation = useMutation({
     mutationFn: createWorkspace,
     onSuccess: () => router.push("/dashboard"),
+    onError: (err: Error) => {
+      if (err.message.includes("already exists")) {
+        router.push("/dashboard");
+      }
+    },
   });
 
   function handleChange(
@@ -84,97 +93,90 @@ export default function OnboardingPage() {
       <h1 className="text-2xl font-semibold mb-1 text-center">
         Set up your workspace
       </h1>
-      <p className="text-sm text-center text-gray-500 mb-6">
+      <p className="text-sm text-center text-muted-foreground mb-6">
         Tell us a bit about your business to get started.
       </p>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="name">
-            Business name <span className="text-red-500">*</span>
-          </label>
-          <input
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="name">
+            Business name <span className="text-destructive">*</span>
+          </Label>
+          <Input
             id="name"
             name="name"
             type="text"
             value={form.name}
             onChange={handleChange}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
             placeholder="Acme Inc."
           />
           {fieldErrors.name && (
-            <p className="text-red-500 text-xs mt-1">{fieldErrors.name}</p>
+            <p className="text-destructive text-xs">{fieldErrors.name}</p>
           )}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="industry">
-            Industry <span className="text-red-500">*</span>
-          </label>
-          <input
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="industry">
+            Industry <span className="text-destructive">*</span>
+          </Label>
+          <Input
             id="industry"
             name="industry"
             type="text"
             value={form.industry}
             onChange={handleChange}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
             placeholder="e.g. SaaS, Healthcare, Retail"
           />
           {fieldErrors.industry && (
-            <p className="text-red-500 text-xs mt-1">{fieldErrors.industry}</p>
+            <p className="text-destructive text-xs">{fieldErrors.industry}</p>
           )}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="website">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="website">
             Website{" "}
-            <span className="text-gray-400 font-normal">(optional)</span>
-          </label>
-          <input
+            <span className="text-muted-foreground font-normal">(optional)</span>
+          </Label>
+          <Input
             id="website"
             name="website"
             type="url"
             value={form.website}
             onChange={handleChange}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
             placeholder="https://example.com"
           />
           {fieldErrors.website && (
-            <p className="text-red-500 text-xs mt-1">{fieldErrors.website}</p>
+            <p className="text-destructive text-xs">{fieldErrors.website}</p>
           )}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="about">
-            About your business <span className="text-red-500">*</span>
-          </label>
-          <textarea
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="about">
+            About your business <span className="text-destructive">*</span>
+          </Label>
+          <Textarea
             id="about"
             name="about"
             rows={3}
             value={form.about}
             onChange={handleChange}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black resize-none"
             placeholder="Briefly describe what your business does."
+            className="resize-none"
           />
           {fieldErrors.about && (
-            <p className="text-red-500 text-xs mt-1">{fieldErrors.about}</p>
+            <p className="text-destructive text-xs">{fieldErrors.about}</p>
           )}
         </div>
 
         {mutation.isError && (
-          <p className="text-red-500 text-sm text-center">
+          <p className="text-destructive text-sm text-center">
             {(mutation.error as Error).message}
           </p>
         )}
 
-        <button
-          type="submit"
-          disabled={mutation.isPending}
-          className="w-full bg-black text-white rounded-md py-2 text-sm font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
-        >
+        <Button type="submit" disabled={mutation.isPending} className="w-full">
           {mutation.isPending ? "Creating workspace..." : "Continue"}
-        </button>
+        </Button>
       </form>
     </>
   );

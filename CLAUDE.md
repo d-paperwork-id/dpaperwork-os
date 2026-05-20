@@ -79,6 +79,12 @@ Agents and skills are resolved from a YAML manifest:
 - Next.js version is **16.2.6** — read `node_modules/next/dist/docs/` before using any Next.js API; do not assume v13/v14/v15 conventions apply.
 - Use **`bunx`** (not `npx`) for CLI tools like `drizzle-kit`.
 
+## UI Components
+
+- **Always use shadcn/ui components first** — `Button`, `Input`, `Dialog`, `Card`, `Select`, `Form`, etc.
+- Only build a custom component when shadcn has no equivalent or the design requirement genuinely can't be met by composing shadcn primitives.
+- Add new shadcn components with `bunx shadcn@latest add <component>`.
+
 ## Commit style
 
 Conventional commits: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`. Subject focuses on the "why". not more than 120 characters.

@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
+import { neon } from "@neondatabase/serverless";
+
+async function hasWorkspace(userId: string): Promise<boolean> {
+  const sql = neon(process.env.DATABASE_URL!);
+  const rows = await sql`SELECT id FROM workspace WHERE user_id = ${userId} LIMIT 1`;
+  return rows.length > 0;
+}
 
 export async function proxy(request: NextRequest) {
   const session = await auth.api.getSession({ headers: request.headers });
@@ -26,14 +33,13 @@ export async function proxy(request: NextRequest) {
   }
 
   if (session && session.user.emailVerified) {
-    const hasWorkspace =
-      request.cookies.get("workspace_created")?.value === "1";
+    const workspaceExists = await hasWorkspace(session.user.id);
 
-    if (pathname.startsWith("/dashboard") && !hasWorkspace) {
+    if (!workspaceExists && pathname !== "/onboarding") {
       return NextResponse.redirect(new URL("/onboarding", request.url));
     }
 
-    if (pathname.startsWith("/onboarding") && hasWorkspace) {
+    if (workspaceExists && pathname === "/onboarding") {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
@@ -43,6 +49,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api/auth|api/workspace|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };

@@ -52,12 +52,5 @@ export async function POST(req: NextRequest) {
     })
     .returning();
 
-  const response = NextResponse.json(created, { status: 201 });
-  response.cookies.set("workspace_created", "1", {
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 365,
-  });
-  return response;
+  return NextResponse.json(created, { status: 201 });
 }

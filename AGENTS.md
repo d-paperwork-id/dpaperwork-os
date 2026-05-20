@@ -52,6 +52,7 @@ Top-level files define how your Mastra project is configured, built, and connect
 - Register new agents, tools, workflows, and scorers in `src/mastra/index.ts`
 - Use schemas for tool inputs and outputs
 - Run `npm run build` to verify changes compile
+- Use **shadcn/ui** components for all UI — only build custom components when shadcn has no equivalent
 
 ### Never do
 
