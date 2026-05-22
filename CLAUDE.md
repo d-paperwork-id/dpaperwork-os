@@ -4,6 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 @AGENTS.md
 
+## CRITICAL: Load `dpaperwork-dev` skill before any feature work
+
+**Before implementing any feature, page, API route, schema, or agent code — load the `dpaperwork-dev` skill FIRST.**
+
+The skill reads the project docs (`docs/`) and returns the exact schema definitions, user flow diagrams, UI component patterns, and implementation scope for the task. Never rely on memory for these — the docs are the source of truth and the skill fetches them directly.
+
+```
+Triggers: any dpaperwork feature, route, schema, domain, agent, UI surface, or "what to build next" question.
+Skill: dpaperwork-dev
+Docs: docs/implementation-plan.md, docs/backend-schema.md, docs/app-flow.md, docs/ui-ux.md, docs/agent-runtime.md, docs/architecture.md, docs/PRD.md
+```
+
 ---
 
 ## Project: dpaperwork

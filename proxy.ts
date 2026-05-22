@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
-import { neon } from "@neondatabase/serverless";
+import { db } from "@/db/drizzle";
+import { workspace } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 async function hasWorkspace(userId: string): Promise<boolean> {
-  const sql = neon(process.env.DATABASE_URL!);
-  const rows = await sql`SELECT id FROM workspace WHERE user_id = ${userId} LIMIT 1`;
+  const rows = await db
+    .select({ id: workspace.id })
+    .from(workspace)
+    .where(eq(workspace.userId, userId))
+    .limit(1);
   return rows.length > 0;
 }
 
