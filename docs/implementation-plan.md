@@ -47,9 +47,9 @@ Based on the stated starting point ("base setup with user auth"):
 - [x] Upstash Redis instance created, keys in `.env`
 - [x] AWS S3 bucket created (`dpaperwork-skills`), S3 versioning enabled, IAM credentials in `.env`
 - [x] Trigger.dev project created, API keys in `.env`
-- [ ] Vercel project connected to repo, env vars synced
-- [ ] Mastra initialized in `src/mastra/index.ts` — bare instance, no agents yet
-- [ ] `@mastra/ai-sdk`, `@ai-sdk/react`, `ai` packages installed
+- [x] Vercel project connected to repo, env vars synced
+- [x] Mastra initialized in `src/mastra/index.ts` — bare instance, no agents yet
+- [x] `@mastra/ai-sdk`, `@ai-sdk/react`, `ai` packages installed
 
 ### 0.2 Database schema — core tables only
 

@@ -5,13 +5,35 @@ import { Resend } from "resend";
 import { render } from "@react-email/render";
 import React from "react";
 import { db } from "@/db/drizzle";
-import * as schema from "@/db/schema";
+import * as schema from "@/db/schema/index";
 import VerificationEmail from "@/emails/verification";
 
 export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
+  },
+  user: {
+    additionalFields: {
+      timezone: {
+        type: "string",
+        required: false,
+        defaultValue: "Asia/Kolkata",
+        input: false,
+      },
+      language: {
+        type: "string",
+        required: false,
+        defaultValue: "en",
+        input: false,
+      },
+      notificationsEmailEnabled: {
+        type: "boolean",
+        required: false,
+        defaultValue: true,
+        input: false,
+      },
+    },
   },
   emailVerification: {
     sendOnSignUp: true,

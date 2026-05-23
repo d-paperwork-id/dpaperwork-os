@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { db } from "@/db/drizzle";
-import { workspace } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { workspaces, workspaceMembers } from "@/db/schema";
+import { eq, and, isNull } from "drizzle-orm";
 import { headers } from "next/headers";
+import { nanoid } from "nanoid";
+import { seedWorkspace } from "@/db/seed";
 
 const createWorkspaceSchema = z.object({
   name: z.string().min(1),
@@ -26,9 +28,15 @@ export async function POST(req: NextRequest) {
   }
 
   const existing = await db
-    .select({ id: workspace.id })
-    .from(workspace)
-    .where(eq(workspace.userId, session.user.id))
+    .select({ id: workspaceMembers.workspaceId })
+    .from(workspaceMembers)
+    .where(
+      and(
+        eq(workspaceMembers.userId, session.user.id),
+        eq(workspaceMembers.role, "admin"),
+        isNull(workspaceMembers.deletedAt)
+      )
+    )
     .limit(1);
 
   if (existing.length > 0) {
@@ -38,19 +46,32 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { name, industry, website: websiteUrl, about } = parsed.data;
+  const { name, industry: _industry, website: _website, about: _about } = parsed.data;
 
-  const [created] = await db
-    .insert(workspace)
-    .values({
-      id: crypto.randomUUID(),
-      userId: session.user.id,
+  const workspaceId = `ws_${nanoid(16)}`;
+  const memberId = `mem_${nanoid(16)}`;
+  const slug = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 48);
+
+  await db.transaction(async (tx) => {
+    await tx.insert(workspaces).values({
+      id: workspaceId,
       name,
-      industry,
-      website: websiteUrl || null,
-      about,
-    })
-    .returning();
+      slug: `${slug}-${nanoid(6)}`,
+    });
 
-  return NextResponse.json(created, { status: 201 });
+    await tx.insert(workspaceMembers).values({
+      id: memberId,
+      workspaceId,
+      userId: session.user.id,
+      role: "admin",
+    });
+
+    await seedWorkspace(tx, workspaceId, session.user.id);
+  });
+
+  return NextResponse.json({ id: workspaceId }, { status: 201 });
 }

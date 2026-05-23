@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/db/drizzle";
-import { workspace } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { workspaceMembers } from "@/db/schema";
+import { eq, and, isNull } from "drizzle-orm";
 
 async function hasWorkspace(userId: string): Promise<boolean> {
   const rows = await db
-    .select({ id: workspace.id })
-    .from(workspace)
-    .where(eq(workspace.userId, userId))
+    .select({ id: workspaceMembers.workspaceId })
+    .from(workspaceMembers)
+    .where(and(eq(workspaceMembers.userId, userId), isNull(workspaceMembers.deletedAt)))
     .limit(1);
   return rows.length > 0;
 }
