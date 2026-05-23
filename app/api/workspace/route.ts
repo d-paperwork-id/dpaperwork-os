@@ -73,5 +73,11 @@ export async function POST(req: NextRequest) {
     await seedWorkspace(tx, workspaceId, session.user.id);
   });
 
-  return NextResponse.json({ id: workspaceId }, { status: 201 });
+  const response = NextResponse.json({ id: workspaceId }, { status: 201 });
+  response.cookies.set("has_workspace", "1", {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+  });
+  return response;
 }

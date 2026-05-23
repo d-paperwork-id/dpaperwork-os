@@ -60,10 +60,10 @@ export default function OnboardingPage() {
 
   const mutation = useMutation({
     mutationFn: createWorkspace,
-    onSuccess: () => router.push("/dashboard"),
+    onSuccess: () => router.push("/inbox"),
     onError: (err: Error) => {
       if (err.message.includes("already exists")) {
-        router.push("/dashboard");
+        router.push("/inbox");
       }
     },
   });
