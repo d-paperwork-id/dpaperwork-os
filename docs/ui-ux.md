@@ -232,7 +232,7 @@ Implementation:
 
 ```tsx
 // Sidebar structure
-<aside className="w-[240px] h-screen flex flex-col border-r border-border bg-background shrink-0">
+<aside className="w-[240px] h-screen flex flex-col border-r border-border  shrink-0">
   {/* Workspace header */}
   <div className="h-12 px-4 flex items-center border-b border-border shrink-0">
     <WorkspaceSwitcher />
