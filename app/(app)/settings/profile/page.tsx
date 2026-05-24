@@ -34,6 +34,28 @@ const languages = [
   { value: "de", label: "German" },
 ];
 
+function SettingRow({
+  label,
+  description,
+  children,
+}: {
+  label: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-6 py-4">
+      <div className="min-w-0">
+        <p className="text-sm font-medium text-foreground">{label}</p>
+        {description && (
+          <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
+        )}
+      </div>
+      <div className="shrink-0">{children}</div>
+    </div>
+  );
+}
+
 export default function ProfileSettings() {
   const { data: session } = authClient.useSession();
   const { theme, setTheme } = useTheme();
@@ -43,44 +65,62 @@ export default function ProfileSettings() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-sm font-semibold text-foreground mb-1">
+        <h2 className="text-base font-semibold text-foreground mb-1">
           Personal information
         </h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          Update your name and email address.
-        </p>
-        <div className="space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" defaultValue={user?.name ?? ""} className="max-w-sm" />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              defaultValue={user?.email ?? ""}
-              className="max-w-sm"
-            />
-          </div>
-          <Button size="sm">Save</Button>
+        <Separator className="mb-0" />
+        <div className="divide-y divide-border">
+          <SettingRow label="Name" description="Your display name across the workspace.">
+            <div className="flex items-center gap-2">
+              <Input
+                id="name"
+                defaultValue={user?.name ?? ""}
+                className="w-48"
+              />
+              <Button size="sm" variant="outline">Save</Button>
+            </div>
+          </SettingRow>
+          <SettingRow label="Email" description="Your sign-in email address.">
+            <div className="flex items-center gap-2">
+              <Input
+                id="email"
+                type="email"
+                defaultValue={user?.email ?? ""}
+                className="w-48"
+              />
+              <Button size="sm" variant="outline">Save</Button>
+            </div>
+          </SettingRow>
         </div>
       </div>
 
-      <Separator />
-
       <div>
-        <h2 className="text-sm font-semibold text-foreground mb-1">
-          Localization
+        <h2 className="text-base font-semibold text-foreground mb-1">
+          Preferences
         </h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          Set your timezone and preferred language.
-        </p>
-        <div className="space-y-4">
-          <div className="space-y-1.5">
-            <Label>Timezone</Label>
+        <Separator className="mb-0" />
+        <div className="divide-y divide-border">
+          <SettingRow
+            label="Appearance"
+            description="Choose how dpaperwork looks on your device."
+          >
+            <Select value={theme} onValueChange={setTheme}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="system">System</SelectItem>
+              </SelectContent>
+            </Select>
+          </SettingRow>
+          <SettingRow
+            label="Timezone"
+            description="Used for scheduling and displaying timestamps."
+          >
             <Select defaultValue="UTC">
-              <SelectTrigger className="max-w-sm">
+              <SelectTrigger className="w-44">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -91,11 +131,13 @@ export default function ProfileSettings() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
-          <div className="space-y-1.5">
-            <Label>Language</Label>
+          </SettingRow>
+          <SettingRow
+            label="Language"
+            description="The language used across the interface."
+          >
             <Select defaultValue="en">
-              <SelectTrigger className="max-w-sm">
+              <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -106,32 +148,7 @@ export default function ProfileSettings() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
-          <Button size="sm">Save</Button>
-        </div>
-      </div>
-
-      <Separator />
-
-      <div>
-        <h2 className="text-sm font-semibold text-foreground mb-1">
-          Appearance
-        </h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          Choose how dpaperwork looks for you.
-        </p>
-        <div className="space-y-1.5">
-          <Label>Theme</Label>
-          <Select value={theme} onValueChange={setTheme}>
-            <SelectTrigger className="max-w-sm">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="system">System</SelectItem>
-            </SelectContent>
-          </Select>
+          </SettingRow>
         </div>
       </div>
     </div>

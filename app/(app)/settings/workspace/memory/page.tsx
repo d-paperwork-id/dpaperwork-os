@@ -1,16 +1,17 @@
 import { Separator } from "@/components/ui/separator";
 
-export default function AgentSettings() {
+export default function WorkspaceMemorySettings() {
   return (
     <div className="space-y-8">
       <div>
         <h2 className="text-base font-semibold text-foreground mb-1">
-          Agents
+          Memory
         </h2>
         <Separator />
         <p className="text-sm text-muted-foreground mt-4">
-          Agent configuration — role definitions, skills, and tool permissions —
-          will be available here in Phase 2.
+          Agent working memory will be visible here in Phase 2. You will be
+          able to review, edit, and prune what each agent has learned about
+          your workspace.
         </p>
       </div>
     </div>
