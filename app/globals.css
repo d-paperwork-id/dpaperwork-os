@@ -2,6 +2,150 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ── ProseMirror / rich editor styles ──────────────────────────── */
+.context-prose {
+  line-height: 1.7;
+  word-break: break-word;
+}
+
+/* Line number gutter — numbers live in the wrapper's pl-10 padding area */
+.context-prose .pm-line {
+  position: relative;
+}
+
+/* Line number on non-empty lines */
+.context-prose .pm-line:not(.is-empty):not(.is-editor-empty)::before {
+  content: attr(data-line);
+  position: absolute;
+  left: -2.25rem;
+  width: 1.75rem;
+  text-align: right;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  line-height: inherit;
+  color: var(--muted-foreground);
+  opacity: 0.45;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Line number on empty middle paragraphs — exclude is-editor-empty so the
+   initial placeholder ::before on the first paragraph is not overridden */
+.context-prose .pm-line.is-empty:not(.is-editor-empty)::before {
+  content: attr(data-line);
+  position: absolute;
+  left: -2.25rem;
+  width: 1.75rem;
+  text-align: right;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  line-height: inherit;
+  color: var(--muted-foreground);
+  opacity: 0.45;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Placeholder */
+.context-prose p.is-editor-empty:first-child::before,
+.context-prose p.is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--muted-foreground);
+  pointer-events: none;
+  height: 0;
+}
+
+/* Headings */
+.context-prose h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.context-prose h2 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 1.25rem;
+  margin-bottom: 0.4rem;
+}
+.context-prose h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 1rem;
+  margin-bottom: 0.3rem;
+}
+
+/* Paragraphs */
+.context-prose p {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.context-prose p:first-child { margin-top: 0; }
+.context-prose p:last-child  { margin-bottom: 0; }
+
+/* Lists */
+.context-prose ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.context-prose ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.context-prose li { margin-top: 0.2rem; margin-bottom: 0.2rem; }
+
+/* Inline code */
+.context-prose code {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.875em;
+  background: var(--muted);
+  border-radius: 3px;
+  padding: 0.1em 0.35em;
+}
+
+/* Code block */
+.context-prose pre {
+  background: var(--muted);
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  overflow-x: auto;
+}
+.context-prose pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 0.85em;
+}
+
+/* Blockquote */
+.context-prose blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 1rem;
+  color: var(--muted-foreground);
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Bold / italic */
+.context-prose strong { font-weight: 600; }
+.context-prose em     { font-style: italic; }
+
+/* Slash command popup (tippy) */
+.tippy-box[data-theme~="novel"] {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.1884 0.0128 248.5103);

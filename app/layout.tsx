@@ -3,6 +3,7 @@ import { Montserrat, Merriweather, Source_Code_Pro } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const fontSans = Montserrat({
   subsets: ["latin"],
@@ -36,6 +37,7 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
           <Providers>{children}</Providers>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,6 +60,8 @@ function SettingRow({
 export default function ProfileSettings() {
   const { data: session } = authClient.useSession();
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const user = session?.user;
 
@@ -104,7 +107,7 @@ export default function ProfileSettings() {
             label="Appearance"
             description="Choose how dpaperwork looks on your device."
           >
-            <Select value={theme} onValueChange={setTheme}>
+            <Select value={mounted ? theme : undefined} onValueChange={setTheme}>
               <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>
