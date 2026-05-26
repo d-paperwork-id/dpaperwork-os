@@ -9,10 +9,13 @@ import {
   MastraPlatformExporter,
   SensitiveDataFilter,
 } from "@mastra/observability";
+import { chiefOfStaffAgent } from "./agents/chief-of-staff";
 
 export const mastra = new Mastra({
   workflows: {},
-  agents: {},
+  agents: {
+    "chief-of-staff": chiefOfStaffAgent,
+  },
   storage: new MastraCompositeStore({
     id: "composite-storage",
     default: new LibSQLStore({
