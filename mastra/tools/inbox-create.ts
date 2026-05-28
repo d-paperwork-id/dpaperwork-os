@@ -19,7 +19,7 @@ export const inboxCreateTool = createTool({
   inputSchema: z.object({
     title: z.string().describe("Short title for the inbox item"),
     body: z.string().describe("Full markdown content of the inbox item"),
-    recipient_user_id: z.string().describe("ID of the user to receive this item"),
+    recipient_user_id: z.string().optional().describe("ID of the user to receive this item. Defaults to the user who triggered this run."),
     priority: z.enum(["low", "normal", "high"]).optional().default("normal"),
     action_chips: z
       .array(
@@ -43,6 +43,7 @@ export const inboxCreateTool = createTool({
       (context.requestContext?.get("agent_id") as string) ?? "chief-of-staff";
     const userId =
       (context.requestContext?.get("user_id") as string) ?? "";
+    const resolvedRecipient = recipient_user_id || userId;
     const routineId = context.requestContext?.get("routine_id") as
       | string
       | undefined;
@@ -53,7 +54,7 @@ export const inboxCreateTool = createTool({
     await db.insert(inboxItems).values({
       id: inboxItemId,
       workspaceId,
-      recipientUserId: recipient_user_id,
+      recipientUserId: resolvedRecipient,
       sourceAgentId: agentId as "pm" | "chief-of-staff" | "executive-assistant",
       sourceRoutineId: routineId ?? null,
       sourceRunId: runId,

@@ -22,7 +22,8 @@ export const weeklyCompanyUpdateTool = createTool({
   inputSchema: z.object({
     recipient_user_id: z
       .string()
-      .describe("ID of the user who will receive the weekly update"),
+      .optional()
+      .describe("ID of the user who will receive the weekly update. Defaults to the user who triggered this run."),
     week_ending: z
       .string()
       .optional()
@@ -36,6 +37,7 @@ export const weeklyCompanyUpdateTool = createTool({
       (context.requestContext?.get("agent_id") as string) ?? "chief-of-staff";
     const userId =
       (context.requestContext?.get("user_id") as string) ?? "";
+    const resolvedRecipient = recipient_user_id || userId;
     const routineId = context.requestContext?.get("routine_id") as
       | string
       | undefined;
@@ -62,7 +64,7 @@ export const weeklyCompanyUpdateTool = createTool({
     await db.insert(inboxItems).values({
       id: inboxItemId,
       workspaceId,
-      recipientUserId: recipient_user_id,
+      recipientUserId: resolvedRecipient,
       sourceAgentId: "chief-of-staff",
       sourceRoutineId: routineId ?? null,
       sourceRunId: runId,

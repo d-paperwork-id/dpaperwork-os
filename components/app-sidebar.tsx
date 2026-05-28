@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { Badge } from "@/components/ui/badge";
+import { useInboxUnreadCount } from "@/lib/hooks/use-inbox";
 import {
   MessageSquare,
   Inbox,
@@ -53,11 +55,13 @@ function NavItem({
   href,
   icon: Icon,
   pathname,
+  badge,
 }: {
   label: string;
   href: string;
   icon: React.ElementType;
   pathname: string;
+  badge?: number;
 }) {
   const isActive =
     pathname === href || (href !== "/" && pathname.startsWith(href));
@@ -74,7 +78,12 @@ function NavItem({
         )}
       >
         <Icon className="w-[18px] h-[18px] shrink-0 transition-transform duration-150 group-hover:scale-[1.08]" />
-        <span>{label}</span>
+        <span className="flex-1">{label}</span>
+        {badge != null && badge > 0 && (
+          <Badge className="h-5 min-w-5 px-1 text-[10px] font-medium tabular-nums">
+            {badge > 99 ? "99+" : badge}
+          </Badge>
+        )}
       </Link>
     </li>
   );
@@ -87,6 +96,7 @@ export function AppSidebar() {
     queryFn: fetchWorkspace,
   });
   const { data: session } = authClient.useSession();
+  const { data: unreadData } = useInboxUnreadCount();
 
   return (
     <Sidebar className="border-r border-sidebar-border">
@@ -116,7 +126,12 @@ export function AppSidebar() {
         {/* Primary nav */}
         <ul className="flex flex-col gap-0.5">
           {primaryNav.map((item) => (
-            <NavItem key={item.href} {...item} pathname={pathname} />
+            <NavItem
+              key={item.href}
+              {...item}
+              pathname={pathname}
+              badge={item.href === "/inbox" ? unreadData?.count : undefined}
+            />
           ))}
         </ul>
 

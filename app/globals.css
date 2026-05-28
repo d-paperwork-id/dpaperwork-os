@@ -325,6 +325,20 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+
+  --animate-inbox-resolve-out: inbox-resolve-out 0.28s ease-out forwards;
+  --animate-inbox-snooze-out: inbox-snooze-out 0.22s ease-out forwards;
+}
+
+@keyframes inbox-resolve-out {
+  0%   { opacity: 1; transform: scale(1); background-color: transparent; }
+  35%  { background-color: hsl(142 76% 36% / 0.12); transform: scale(1.008); }
+  100% { opacity: 0; transform: scale(0.95) translateY(-6px); }
+}
+
+@keyframes inbox-snooze-out {
+  0%   { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(28px); }
 }
 
 @layer base {

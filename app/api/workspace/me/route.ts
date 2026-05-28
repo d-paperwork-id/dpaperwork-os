@@ -12,7 +12,7 @@ export async function GET() {
   }
 
   const rows = await db
-    .select({ id: workspaces.id, name: workspaces.name, slug: workspaces.slug })
+    .select({ id: workspaces.id, name: workspaces.name, slug: workspaces.slug, timezone: workspaces.timezone })
     .from(workspaceMembers)
     .innerJoin(workspaces, eq(workspaceMembers.workspaceId, workspaces.id))
     .where(
