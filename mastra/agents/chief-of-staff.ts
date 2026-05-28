@@ -26,6 +26,7 @@ export const chiefOfStaffAgent = new Agent({
   model: gateway("openai/gpt-4o"),
   instructions: async ({ requestContext }) => {
     const workspaceId = requestContext.get("workspace_id") as string;
+    const userId = requestContext.get("user_id") as string | undefined;
 
     const [contextRow, roleRow] = await Promise.all([
       db
@@ -49,6 +50,9 @@ export const chiefOfStaffAgent = new Agent({
 
     return [
       PLATFORM_SYSTEM_PROMPT,
+      userId
+        ? `# Current user\nThe user who triggered this run has ID: ${userId}. Always pass this exact value as recipient_user_id when calling inbox.create or weekly_company_update.`
+        : "",
       contextRow?.content ? `# Company context\n${contextRow.content}` : "",
       roleRow?.content ? `# Your role here\n${roleRow.content}` : "",
     ]

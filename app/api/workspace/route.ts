@@ -5,6 +5,7 @@ import { db } from "@/db/drizzle";
 import { workspaces, workspaceMembers } from "@/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { headers } from "next/headers";
+import { getWorkspaceForUser } from "@/lib/workspace";
 import { nanoid } from "nanoid";
 import { seedWorkspace } from "@/db/seed";
 
@@ -14,6 +15,22 @@ const createWorkspaceSchema = z.object({
   website: z.string().url().optional().or(z.literal("")),
   about: z.string().min(1),
 });
+
+export async function GET() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const ws = await getWorkspaceForUser(session.user.id);
+  if (!ws) return NextResponse.json({ error: "No workspace found" }, { status: 404 });
+
+  const [workspace] = await db
+    .select({ id: workspaces.id, name: workspaces.name, timezone: workspaces.timezone })
+    .from(workspaces)
+    .where(eq(workspaces.id, ws.id))
+    .limit(1);
+
+  return NextResponse.json({ workspace });
+}
 
 export async function POST(req: NextRequest) {
   const session = await auth.api.getSession({ headers: await headers() });
