@@ -126,16 +126,7 @@ export function InboxDetailPanel({
           {/* Body */}
           <ScrollArea className="flex-1">
             <div className="px-6 py-5">
-              <div className="prose prose-sm dark:prose-invert max-w-none
-                prose-headings:font-semibold prose-headings:text-foreground prose-headings:tracking-tight
-                prose-h2:text-sm prose-h2:mt-5 prose-h2:mb-2
-                prose-h3:text-xs prose-h3:uppercase prose-h3:tracking-wider prose-h3:text-muted-foreground prose-h3:mt-4 prose-h3:mb-1.5
-                prose-p:text-sm prose-p:leading-relaxed prose-p:text-foreground prose-p:my-2
-                prose-li:text-sm prose-li:text-foreground prose-li:my-0.5
-                prose-ul:my-2 prose-ol:my-2
-                prose-strong:text-foreground prose-strong:font-semibold
-                prose-hr:border-border prose-hr:my-4
-              ">
+              <div className="context-prose text-sm text-foreground">
                 <ReactMarkdown>{item.body}</ReactMarkdown>
               </div>
             </div>
