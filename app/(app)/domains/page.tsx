@@ -8,7 +8,13 @@ import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Empty, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty";
+import {
+  Empty,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyContent,
+} from "@/components/ui/empty";
 import { NewDomainSheet } from "@/components/domains/new-domain-sheet";
 import { getDomainIcon } from "@/components/domains/domain-icons";
 
@@ -54,7 +60,9 @@ export default function DomainsPage() {
         {isError && (
           <div className="px-6 py-4">
             <Alert>
-              <AlertDescription>Failed to load domains. Please refresh.</AlertDescription>
+              <AlertDescription>
+                Failed to load domains. Please refresh.
+              </AlertDescription>
             </Alert>
           </div>
         )}
@@ -62,7 +70,10 @@ export default function DomainsPage() {
         {!isLoading && !isError && data?.domains.length === 0 && (
           <Empty>
             <EmptyMedia variant="icon">
-              {(() => { const Icon = getDomainIcon(null); return <Icon className="w-8 h-8" />; })()}
+              {(() => {
+                const Icon = getDomainIcon(null);
+                return <Icon className="w-8 h-8" />;
+              })()}
             </EmptyMedia>
             <EmptyTitle>No domains yet</EmptyTitle>
             <EmptyDescription>
@@ -88,7 +99,7 @@ export default function DomainsPage() {
                 >
                   <div className="flex items-start gap-3 mb-4">
                     <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                      <Icon className="w-[18px] h-[18px] text-muted-foreground" />
+                      <Icon className="w-4.5w-4.5 h-4.5 text-muted-foreground" />
                     </div>
                     <div className="flex-1 min-w-0 pt-0.5">
                       <p className="text-sm font-semibold text-foreground leading-tight truncate">
@@ -99,7 +110,9 @@ export default function DomainsPage() {
                           {domain.description}
                         </p>
                       ) : (
-                        <p className="text-xs text-muted-foreground/50 mt-1">No description</p>
+                        <p className="text-xs text-muted-foreground/50 mt-1">
+                          No description
+                        </p>
                       )}
                     </div>
                   </div>

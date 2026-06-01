@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -11,7 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { Separator } from "@/components/ui/separator";
 import { formatSchedule } from "@/lib/routines/schedule";
@@ -44,7 +50,7 @@ export default function NewRoutinePage() {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     formState: { errors },
   } = useForm<FormValues>({
@@ -56,8 +62,8 @@ export default function NewRoutinePage() {
     },
   });
 
-  const dayOfWeek = watch("dayOfWeek");
-  const timeLocal = watch("timeLocal");
+  const dayOfWeek = useWatch({ control, name: "dayOfWeek" });
+  const timeLocal = useWatch({ control, name: "timeLocal" });
 
   useEffect(() => {
     fetch("/api/workspace")
@@ -74,18 +80,26 @@ export default function NewRoutinePage() {
       const res = await fetch("/api/routines", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, outputDestination: { kind: "inbox" } }),
+        body: JSON.stringify({
+          ...values,
+          outputDestination: { kind: "inbox" },
+        }),
       });
 
       if (!res.ok) {
         const err = await res.json();
-        toast.error("Failed to create routine", { description: JSON.stringify(err.error) });
+        toast.error("Failed to create routine", {
+          description: JSON.stringify(err.error),
+        });
         return;
       }
 
       const { routine } = await res.json();
       toast.success("Routine created", {
-        description: formatSchedule(routine.scheduleCronLocal, routine.scheduleTimezone),
+        description: formatSchedule(
+          routine.scheduleCronLocal,
+          routine.scheduleTimezone,
+        ),
       });
       router.push(`/routines/${routine.id}`);
     } finally {
@@ -119,7 +133,9 @@ export default function NewRoutinePage() {
             <Label className="text-sm font-medium">Agent</Label>
             <Select
               defaultValue="chief-of-staff"
-              onValueChange={(v) => setValue("agentId", v as FormValues["agentId"])}
+              onValueChange={(v) =>
+                setValue("agentId", v as FormValues["agentId"])
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select agent" />
@@ -129,7 +145,9 @@ export default function NewRoutinePage() {
               </SelectContent>
             </Select>
             {errors.agentId && (
-              <p className="text-xs text-destructive">{errors.agentId.message}</p>
+              <p className="text-xs text-destructive">
+                {errors.agentId.message}
+              </p>
             )}
           </div>
 
@@ -140,7 +158,7 @@ export default function NewRoutinePage() {
             </Label>
             <Textarea
               id="instruction"
-              className="font-mono text-sm resize-none min-h-[160px]"
+              className="font-mono text-sm resize-none min-h-40"
               placeholder="Summarize last week's deals, projects, and any notable decisions..."
               {...register("instruction")}
             />
@@ -148,7 +166,9 @@ export default function NewRoutinePage() {
               Written in plain English. The agent reads this exactly as typed.
             </p>
             {errors.instruction && (
-              <p className="text-xs text-destructive">{errors.instruction.message}</p>
+              <p className="text-xs text-destructive">
+                {errors.instruction.message}
+              </p>
             )}
           </div>
 
@@ -157,7 +177,9 @@ export default function NewRoutinePage() {
           {/* Schedule */}
           <div className="space-y-4">
             <div>
-              <h2 className="text-sm font-semibold text-foreground mb-1">Schedule</h2>
+              <h2 className="text-sm font-semibold text-foreground mb-1">
+                Schedule
+              </h2>
               <p className="text-xs text-muted-foreground">
                 Schedules run in {timezone}
               </p>
@@ -182,7 +204,9 @@ export default function NewRoutinePage() {
                   </SelectContent>
                 </Select>
                 {errors.dayOfWeek && (
-                  <p className="text-xs text-destructive">{errors.dayOfWeek.message}</p>
+                  <p className="text-xs text-destructive">
+                    {errors.dayOfWeek.message}
+                  </p>
                 )}
               </div>
 
@@ -197,7 +221,9 @@ export default function NewRoutinePage() {
                   {...register("timeLocal")}
                 />
                 {errors.timeLocal && (
-                  <p className="text-xs text-destructive">{errors.timeLocal.message}</p>
+                  <p className="text-xs text-destructive">
+                    {errors.timeLocal.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -208,7 +234,7 @@ export default function NewRoutinePage() {
                 <span className="font-medium text-foreground">
                   {formatSchedule(
                     `0 ${timeLocal.split(":")[1] === "00" ? parseInt(timeLocal.split(":")[0], 10) : parseInt(timeLocal.split(":")[0], 10)} * * ${dayOfWeek === 7 ? 0 : dayOfWeek}`,
-                    timezone
+                    timezone,
                   )}
                 </span>
               </p>
@@ -219,10 +245,14 @@ export default function NewRoutinePage() {
 
           {/* Output */}
           <div className="space-y-1.5">
-            <h2 className="text-sm font-semibold text-foreground mb-1">Output</h2>
+            <h2 className="text-sm font-semibold text-foreground mb-1">
+              Output
+            </h2>
             <div className="flex items-center gap-2 px-3 py-2 rounded-md border border-border bg-muted/40">
               <span className="text-sm text-foreground">Inbox</span>
-              <span className="text-xs text-muted-foreground ml-1">— delivered to your inbox</span>
+              <span className="text-xs text-muted-foreground ml-1">
+                — delivered to your inbox
+              </span>
             </div>
           </div>
 

@@ -328,6 +328,7 @@
 
   --animate-inbox-resolve-out: inbox-resolve-out 0.28s ease-out forwards;
   --animate-inbox-snooze-out: inbox-snooze-out 0.22s ease-out forwards;
+  --animate-detail-in: detail-in 150ms ease-out forwards;
 }
 
 @keyframes inbox-resolve-out {
@@ -339,6 +340,11 @@
 @keyframes inbox-snooze-out {
   0%   { opacity: 1; transform: translateX(0); }
   100% { opacity: 0; transform: translateX(28px); }
+}
+
+@keyframes detail-in {
+  0%   { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 @layer base {

@@ -1,5 +1,4 @@
 import {
-  boolean,
   index,
   integer,
   pgTable,
@@ -49,7 +48,7 @@ export const workspaces = pgTable(
     uniqueIndex("workspaces_slug_unique")
       .on(table.slug)
       .where(sql`deleted_at IS NULL`),
-  ]
+  ],
 );
 
 export const workspaceMembers = pgTable(
@@ -84,5 +83,5 @@ export const workspaceMembers = pgTable(
       .where(sql`deleted_at IS NULL`),
     index("workspace_members_workspace_idx").on(table.workspaceId),
     index("workspace_members_user_idx").on(table.userId),
-  ]
+  ],
 );

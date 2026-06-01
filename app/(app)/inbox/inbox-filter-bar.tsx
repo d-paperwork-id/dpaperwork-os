@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 const AGENT_OPTIONS = [
   { value: "all", label: "All agents" },
@@ -41,13 +42,13 @@ export function InboxFilterBar() {
       }
       router.push(`${pathname}?${params.toString()}`);
     },
-    [router, pathname, searchParams]
+    [router, pathname, searchParams],
   );
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-3">
       <Select value={agent} onValueChange={(v) => update("agent", v)}>
-        <SelectTrigger className="h-8 w-[160px] text-xs">
+        <SelectTrigger className="h-7 w-40 text-xs border-dashed">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -59,18 +60,23 @@ export function InboxFilterBar() {
         </SelectContent>
       </Select>
 
-      <Select value={status} onValueChange={(v) => update("status", v)}>
-        <SelectTrigger className="h-8 w-[120px] text-xs">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {STATUS_OPTIONS.map((opt) => (
-            <SelectItem key={opt.value} value={opt.value} className="text-xs">
-              {opt.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {/* Segmented status control */}
+      <div className="flex items-center rounded-md border border-border p-0.5 bg-muted/50">
+        {STATUS_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => update("status", opt.value)}
+            className={cn(
+              "px-2.5 py-0.5 text-xs rounded-sm transition-all duration-150",
+              status === opt.value
+                ? "bg-background text-foreground shadow-xs font-medium"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
