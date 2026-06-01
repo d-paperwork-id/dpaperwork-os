@@ -85,7 +85,9 @@ export default function SettingsLayout({
           ))}
         </aside>
         <div className="flex-1 overflow-auto p-6">
-          <div className="max-w-2xl">{children}</div>
+          <div className={pathname === "/settings/workspace/context" ? "w-full" : "max-w-2xl"}>
+            {children}
+          </div>
         </div>
       </div>
     </>

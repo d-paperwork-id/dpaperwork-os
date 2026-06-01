@@ -3,9 +3,6 @@
 import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import { useEditor, EditorContent, BubbleMenu, ReactRenderer } from "@tiptap/react";
 import type { Editor, Range } from "@tiptap/core";
-import { Extension } from "@tiptap/core";
-import { Plugin, PluginKey } from "@tiptap/pm/state";
-import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Markdown } from "tiptap-markdown";
@@ -208,36 +205,6 @@ const slashCommand = Command.configure({
   },
 });
 
-// ── Line numbers extension ────────────────────────────────────────
-
-const lineNumbersKey = new PluginKey("lineNumbers");
-
-const LineNumbers = Extension.create({
-  name: "lineNumbers",
-  addProseMirrorPlugins() {
-    return [
-      new Plugin({
-        key: lineNumbersKey,
-        props: {
-          decorations(state) {
-            const decorations: Decoration[] = [];
-            let n = 1;
-            state.doc.forEach((node, offset) => {
-              decorations.push(
-                Decoration.node(offset, offset + node.nodeSize, {
-                  "data-line": String(n++),
-                  class: "pm-line",
-                })
-              );
-            });
-            return DecorationSet.create(state.doc, decorations);
-          },
-        },
-      }),
-    ];
-  },
-});
-
 // ── Extensions ────────────────────────────────────────────────────
 
 const extensions = [
@@ -254,7 +221,6 @@ const extensions = [
     includeChildren: true,
   }),
   slashCommand,
-  LineNumbers,
 ];
 
 // ── Main editor component ─────────────────────────────────────────
@@ -290,7 +256,7 @@ export function ContextEditor({ defaultValue, onChange, className }: ContextEdit
   return (
     <div
       className={cn(
-        "relative h-[480px] w-full overflow-y-auto rounded-md border border-input bg-background pr-4 pl-10 py-3 text-sm cursor-text",
+        "relative h-[480px] w-full overflow-y-auto rounded-md border border-input bg-background px-4 py-3 text-sm cursor-text",
         className
       )}
       onClick={() => editor?.chain().focus().run()}
