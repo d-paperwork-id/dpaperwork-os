@@ -99,7 +99,7 @@ export function AppSidebar() {
   const { data: unreadData } = useInboxUnreadCount();
 
   return (
-    <Sidebar className="border-r border-sidebar-border">
+    <Sidebar variant="inset">
       {/* Brand */}
       <SidebarHeader className="px-4 pt-5 pb-4">
         <span className="text-[18px] font-bold tracking-tight text-foreground leading-none">

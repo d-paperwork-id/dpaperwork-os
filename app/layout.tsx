@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Montserrat, Merriweather, Source_Code_Pro } from "next/font/google";
+import { Inter, Merriweather, Source_Code_Pro } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
-const fontSans = Montserrat({
+const fontSans = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });

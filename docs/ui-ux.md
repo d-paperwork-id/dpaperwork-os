@@ -185,17 +185,18 @@ Follow Tailwind's default scale. The most-used values in dpaperwork:
 
 ### App Shell
 
+The shell uses the shadcn **inset sidebar variant**. Both the sidebar and the main content area render as rounded cards floating on the sidebar background color.
+
 ```
-┌─────────────────────────────────────────────┐
-│ [Sidebar 240px] │ [Content area: flex-1]    │
-│                 │                           │
-│  Nav items      │  [Header 48px]            │
-│  (fixed)        │  ─────────────────────── │
-│                 │  [Main content]           │
-│                 │                           │
-│  [User profile] │  [Optional right panel   │
-│  (bottom)       │   380px — chat detail,   │
-│                 │   record detail, etc.]    │
+┌── bg-sidebar (full viewport) ───────────────┐
+│  ┌─ sidebar card ─┐  ┌─ main card ────────┐ │
+│  │ [Sidebar 256px]│  │ [Header 48px]      │ │
+│  │                │  │ ─────────────────  │ │
+│  │  Nav items     │  │ [Main content]     │ │
+│  │  (fixed)       │  │                   │ │
+│  │                │  │ [Optional right   │ │
+│  │  [User profile]│  │  panel 380px]     │ │
+│  └────────────────┘  └───────────────────┘ │
 └─────────────────────────────────────────────┘
 ```
 
@@ -203,16 +204,21 @@ Implementation:
 
 ```tsx
 // app/(app)/layout.tsx
-<div className="flex h-screen overflow-hidden bg-background">
-  <Sidebar />  {/* w-[240px] shrink-0 border-r border-border */}
-  <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-    <Header />  {/* h-12 border-b border-border px-6 */}
-    <main className="flex-1 overflow-auto">
-      {children}
-    </main>
-  </div>
-</div>
+<SidebarProvider>          {/* bg-sidebar wrapper (auto via has-data-[variant=inset]) */}
+  <AppSidebar />           {/* variant="inset" — rounded-xl card, p-2 gap */}
+  <SidebarInset            {/* m-2 ml-0 rounded-xl shadow-md bg-background */}
+    className="min-w-0 overflow-hidden"
+  >
+    {children}
+  </SidebarInset>
+</SidebarProvider>
 ```
+
+Key rules:
+- Sidebar uses `variant="inset"` — no `border-r`, padding creates the visual gap.
+- Main area is `<SidebarInset>` — auto-applies `rounded-xl shadow-md` in inset mode.
+- Outer background is always `--sidebar` color (set automatically by `SidebarProvider`).
+- Never revert to a flat `<main>` wrapper or add a manual `border-r` to the sidebar.
 
 ### Content Area Widths
 
@@ -230,30 +236,37 @@ Implementation:
 
 ### Sidebar
 
+Uses the shadcn `<Sidebar variant="inset">` component. The inner card gets `rounded-xl` automatically. No manual `border-r`.
+
 ```tsx
-// Sidebar structure
-<aside className="w-[240px] h-screen flex flex-col border-r border-border  shrink-0">
-  {/* Workspace header */}
-  <div className="h-12 px-4 flex items-center border-b border-border shrink-0">
+// components/app-sidebar.tsx
+<Sidebar variant="inset">
+  <SidebarHeader className="px-4 pt-5 pb-4">
+    <span className="text-[18px] font-bold tracking-tight">dpaperwork</span>
+  </SidebarHeader>
+
+  <SidebarContent className="px-2 gap-1">
+    {/* Workspace selector */}
     <WorkspaceSwitcher />
-  </div>
 
-  {/* Nav groups */}
-  <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
-    <NavItem icon={MessageSquare} label="Chat" href="/chat" />
-    <NavItem icon={Inbox} label="Inbox" href="/inbox" badge={unreadCount} />
-    <NavItem icon={Database} label="Domains" href="/domains" />
-    <NavItem icon={Repeat} label="Routines" href="/routines" />
-    <NavItem icon={Kanban} label="Projects" href="/projects" />
+    {/* Primary nav */}
+    <ul className="flex flex-col gap-0.5">
+      <NavItem icon={MessageSquare} label="Chat" href="/chat" />
+      <NavItem icon={Inbox} label="Inbox" href="/inbox" badge={unreadCount} />
+      <NavItem icon={Database} label="Domains" href="/domains" />
+      <NavItem icon={Repeat} label="Routines" href="/routines" />
+      <NavItem icon={FolderKanban} label="Projects" href="/projects" />
+    </ul>
+
+    {/* Secondary nav — "Workspace" label */}
     <NavItem icon={Plug} label="Integrations" href="/integrations" />
-    <NavItem icon={Settings} label="Settings" href="/settings" />
-  </nav>
+    <NavItem icon={Settings} label="Settings" href="/settings/profile" />
+  </SidebarContent>
 
-  {/* User profile at bottom */}
-  <div className="shrink-0 p-2 border-t border-border">
-    <UserMenu />
-  </div>
-</aside>
+  <SidebarFooter className="px-3 pb-4">
+    {/* Connect integrations card + UserMenu */}
+  </SidebarFooter>
+</Sidebar>
 ```
 
 ### NavItem
