@@ -7,7 +7,12 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Empty, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
+import {
+  Empty,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/components/ui/empty";
 import { AgentAvatar } from "./agent-avatar";
 import { SnoozePopover } from "./snooze-popover";
 import {
@@ -70,7 +75,9 @@ export function InboxDetailPanel({
               <Inbox className="w-8 h-8" />
             </EmptyMedia>
             <EmptyTitle>Nothing selected</EmptyTitle>
-            <EmptyDescription>Pick an item from the list to read it.</EmptyDescription>
+            <EmptyDescription>
+              Pick an item from the list to read it.
+            </EmptyDescription>
           </Empty>
         </div>
       ) : (
@@ -83,21 +90,24 @@ export function InboxDetailPanel({
 
           {/* Header */}
           <div className="px-6 pt-5 pb-4 border-b border-border shrink-0 flex items-start gap-3">
-            <div className="shrink-0 mt-0.5">
-              <AgentAvatar agentId={item.sourceAgentId} />
-            </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap mb-1">
                 <span className="text-xs font-medium text-muted-foreground">
                   {AGENT_LABELS[item.sourceAgentId] ?? item.sourceAgentId}
                 </span>
                 {routineName && (
-                  <Badge variant="secondary" className="text-[10px] font-normal px-1.5 py-0">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] font-normal px-1.5 py-0"
+                  >
                     {routineName}
                   </Badge>
                 )}
                 {!item.readAt && (
-                  <Badge variant="secondary" className="text-[10px] font-medium px-1.5 py-0">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] font-medium px-1.5 py-0"
+                  >
                     New
                   </Badge>
                 )}
@@ -144,11 +154,14 @@ export function InboxDetailPanel({
               <Check className="w-3.5 h-3.5 mr-1.5" />
               {resolve.isPending ? "Resolving…" : "Resolve"}
             </Button>
-            <SnoozePopover onSnooze={handleSnooze} workspaceTimezone={workspaceTimezone}>
+            <SnoozePopover
+              onSnooze={handleSnooze}
+              workspaceTimezone={workspaceTimezone}
+            >
               <Button
                 variant="outline"
                 size="sm"
-                className="text-amber-700 border-amber-200 hover:bg-amber-50 hover:border-amber-300 dark:text-amber-400 dark:border-amber-900 dark:hover:bg-amber-950"
+                className="text-amber-500 border-amber-200 hover:bg-amber-50 hover:border-amber-300 dark:text-amber-400 dark:border-amber-900 dark:hover:bg-amber-950"
               >
                 <Clock className="w-3.5 h-3.5 mr-1.5" />
                 Snooze

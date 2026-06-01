@@ -74,7 +74,7 @@ function NavItem({
           "group flex h-9 w-full items-center gap-2.5 rounded-md px-3 text-sm transition-colors duration-150 ease-out",
           isActive
             ? "bg-sidebar-accent text-foreground font-medium [&>svg]:text-foreground"
-            : "bg-transparent text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground [&>svg]:text-muted-foreground hover:[&>svg]:text-foreground"
+            : "bg-transparent text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground [&>svg]:text-muted-foreground hover:[&>svg]:text-foreground",
         )}
       >
         <Icon className="w-[18px] h-[18px] shrink-0 transition-transform duration-150 group-hover:scale-[1.08]" />
@@ -149,27 +149,11 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="px-3 pb-4">
-        {/* Invite card */}
-        <div className="mb-3 rounded-xl border border-sidebar-border bg-background p-3.5">
-          <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
-            <Plug className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <p className="text-[13px] font-semibold text-foreground leading-snug">
-            Connect integrations
-          </p>
-          <p className="mt-0.5 text-[12px] text-muted-foreground leading-snug">
-            Link your tools to give agents full context.
-          </p>
-        </div>
-
         {/* User menu */}
         <SidebarMenu>
           <SidebarMenuItem>
             {session?.user ? (
-              <UserMenu
-                name={session.user.name}
-                email={session.user.email}
-              />
+              <UserMenu name={session.user.name} email={session.user.email} />
             ) : (
               <Skeleton className="h-10 w-full rounded-md" />
             )}

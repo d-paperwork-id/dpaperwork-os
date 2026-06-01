@@ -31,7 +31,7 @@ export function InboxItemRow({
   return (
     <div
       className={cn(
-        "group relative flex items-start gap-3 px-4 py-3",
+        "group relative flex items-start gap-3 px-4 py-3 m-1 rounded-md",
         "border-b border-border cursor-pointer select-none transition-colors",
         "hover:bg-accent",
         isUnread && "border-l-[3px]",
