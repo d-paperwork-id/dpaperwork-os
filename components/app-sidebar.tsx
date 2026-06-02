@@ -21,9 +21,14 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserMenu } from "@/components/user-menu";
 import { authClient } from "@/lib/auth-client";
@@ -63,34 +68,50 @@ function NavItem({
   pathname: string;
   badge?: number;
 }) {
+  const { state, isMobile } = useSidebar();
+  const isCollapsed = state === "collapsed" && !isMobile;
   const isActive =
     pathname === href || (href !== "/" && pathname.startsWith(href));
 
-  return (
+  const link = (
     <li>
       <Link
         href={href}
         className={cn(
           "group flex h-9 w-full items-center gap-2.5 rounded-md px-3 text-sm transition-colors duration-150 ease-out",
+          "group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center",
           isActive
             ? "bg-sidebar-accent text-foreground font-medium [&>svg]:text-foreground"
             : "bg-transparent text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground [&>svg]:text-muted-foreground hover:[&>svg]:text-foreground",
         )}
       >
         <Icon className="w-[18px] h-[18px] shrink-0 transition-transform duration-150 group-hover:scale-[1.08]" />
-        <span className="flex-1">{label}</span>
+        <span className="flex-1 group-data-[collapsible=icon]:hidden">{label}</span>
         {badge != null && badge > 0 && (
-          <Badge className="h-5 min-w-5 px-1 text-[10px] font-medium tabular-nums">
+          <Badge className="h-5 min-w-5 px-1 text-[10px] font-medium tabular-nums group-data-[collapsible=icon]:hidden">
             {badge > 99 ? "99+" : badge}
           </Badge>
         )}
       </Link>
     </li>
   );
+
+  if (isCollapsed) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>{link}</TooltipTrigger>
+        <TooltipContent side="right">{label}</TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return link;
 }
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
   const { data: workspace } = useQuery({
     queryKey: ["workspace-me"],
     queryFn: fetchWorkspace,
@@ -99,10 +120,15 @@ export function AppSidebar() {
   const { data: unreadData } = useInboxUnreadCount();
 
   return (
-    <Sidebar variant="inset">
+    <Sidebar variant="inset" collapsible="icon">
       {/* Brand */}
       <SidebarHeader className="px-4 pt-5 pb-4">
-        <span className="text-[18px] font-bold tracking-tight text-foreground leading-none">
+        <span
+          className={cn(
+            "text-[18px] font-bold tracking-tight text-foreground leading-none transition-opacity duration-200",
+            isCollapsed && "opacity-0 pointer-events-none",
+          )}
+        >
           dpaperwork
         </span>
       </SidebarHeader>
@@ -111,12 +137,17 @@ export function AppSidebar() {
         {/* Workspace selector */}
         <div className="px-1 mb-1">
           {workspace ? (
-            <button className="flex w-full items-center gap-2.5 rounded-lg border border-sidebar-border bg-background px-3 py-2 hover:bg-sidebar-accent/50 transition-colors duration-150 group">
+            <button
+              className={cn(
+                "flex w-full items-center gap-2.5 rounded-lg border border-sidebar-border bg-background px-3 py-2 hover:bg-sidebar-accent/50 transition-colors duration-150 group",
+                isCollapsed && "justify-center px-2",
+              )}
+            >
               <div className="h-5 w-5 rounded-full bg-primary shrink-0" />
-              <span className="flex-1 text-left text-sm font-medium text-foreground truncate">
+              <span className="flex-1 text-left text-sm font-medium text-foreground truncate group-data-[collapsible=icon]:hidden">
                 {workspace.name}
               </span>
-              <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform duration-150 group-hover:scale-110" />
+              <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform duration-150 group-hover:scale-110 group-data-[collapsible=icon]:hidden" />
             </button>
           ) : (
             <Skeleton className="h-9 w-full rounded-lg" />
@@ -137,7 +168,7 @@ export function AppSidebar() {
 
         {/* Secondary nav */}
         <div className="mt-4">
-          <p className="px-3 mb-1 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/50">
+          <p className="px-3 mb-1 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/50 group-data-[collapsible=icon]:hidden">
             Workspace
           </p>
           <ul className="flex flex-col gap-0.5">
@@ -149,7 +180,6 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="px-3 pb-4">
-        {/* User menu */}
         <SidebarMenu>
           <SidebarMenuItem>
             {session?.user ? (

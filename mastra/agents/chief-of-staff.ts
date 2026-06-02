@@ -1,5 +1,6 @@
 import { Agent } from "@mastra/core/agent";
 import { gateway } from "@ai-sdk/gateway";
+import { agentMemory } from "../storage";
 import { db } from "@/db/drizzle";
 import { contextMd, roleMd } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -24,6 +25,7 @@ export const chiefOfStaffAgent = new Agent({
   id: "chief-of-staff",
   name: "Chief of Staff",
   model: gateway("openai/gpt-4o"),
+  memory: agentMemory,
   instructions: async ({ requestContext }) => {
     const workspaceId = requestContext.get("workspace_id") as string;
     const userId = requestContext.get("user_id") as string | undefined;
