@@ -10,6 +10,9 @@ import {
 import { sql } from "drizzle-orm";
 import { user } from "./auth";
 
+export const invitationStatusEnum = ["pending", "accepted", "revoked", "expired"] as const;
+type InvitationStatus = (typeof invitationStatusEnum)[number];
+
 export const workspaceRoles = pgTable(
   "workspace_roles",
   {
@@ -74,6 +77,35 @@ export const workspaces = pgTable(
     uniqueIndex("workspaces_slug_unique")
       .on(table.slug)
       .where(sql`deleted_at IS NULL`),
+  ],
+);
+
+export const workspaceInvitations = pgTable(
+  "workspace_invitations",
+  {
+    id: text("id").primaryKey(), // inv_...
+    workspaceId: text("workspace_id")
+      .notNull()
+      .references(() => workspaces.id),
+    email: text("email").notNull(),
+    roleId: text("role_id").references(() => workspaceRoles.id),
+    token: text("token").notNull().unique(),
+    invitedByUserId: text("invited_by_user_id").references(() => user.id),
+    status: text("status", { enum: ["pending", "accepted", "revoked", "expired"] })
+      .notNull()
+      .default("pending"),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    index("workspace_invitations_workspace_status_idx").on(table.workspaceId, table.status),
+    index("workspace_invitations_email_idx").on(table.email),
   ],
 );
 

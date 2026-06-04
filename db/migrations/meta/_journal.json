@@ -15,6 +15,13 @@
       "when": 1780554471048,
       "tag": "0002_heavy_spiral",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1780556409214,
+      "tag": "0003_condemned_betty_ross",
+      "breakpoints": true
     }
   ]
 }

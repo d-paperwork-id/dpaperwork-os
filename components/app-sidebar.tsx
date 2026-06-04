@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { useInboxUnreadCount } from "@/lib/hooks/use-inbox";
 import {
@@ -13,7 +12,6 @@ import {
   FolderKanban,
   Plug,
   Settings,
-  ChevronsUpDown,
 } from "lucide-react";
 import {
   Sidebar,
@@ -31,6 +29,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserMenu } from "@/components/user-menu";
+import { WorkspaceSwitcher } from "@/components/workspace-switcher";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
@@ -46,14 +45,6 @@ const secondaryNav = [
   { label: "Integrations", href: "/integrations", icon: Plug },
   { label: "Settings", href: "/settings/profile", icon: Settings },
 ];
-
-type Workspace = { id: string; name: string; slug: string };
-
-async function fetchWorkspace(): Promise<Workspace> {
-  const res = await fetch("/api/workspace/me");
-  if (!res.ok) throw new Error("failed");
-  return res.json();
-}
 
 function NavItem({
   label,
@@ -85,8 +76,10 @@ function NavItem({
             : "bg-transparent text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground [&>svg]:text-muted-foreground hover:[&>svg]:text-foreground",
         )}
       >
-        <Icon className="w-[18px] h-[18px] shrink-0 transition-transform duration-150 group-hover:scale-[1.08]" />
-        <span className="flex-1 group-data-[collapsible=icon]:hidden">{label}</span>
+        <Icon className="w-4.5 h-4.5 shrink-0 transition-transform duration-150 group-hover:scale-[1.08]" />
+        <span className="flex-1 group-data-[collapsible=icon]:hidden">
+          {label}
+        </span>
         {badge != null && badge > 0 && (
           <Badge className="h-5 min-w-5 px-1 text-[10px] font-medium tabular-nums group-data-[collapsible=icon]:hidden">
             {badge > 99 ? "99+" : badge}
@@ -112,10 +105,6 @@ export function AppSidebar() {
   const pathname = usePathname();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
-  const { data: workspace } = useQuery({
-    queryKey: ["workspace-me"],
-    queryFn: fetchWorkspace,
-  });
   const { data: session } = authClient.useSession();
   const { data: unreadData } = useInboxUnreadCount();
 
@@ -136,22 +125,7 @@ export function AppSidebar() {
       <SidebarContent className="px-2 gap-1">
         {/* Workspace selector */}
         <div className="px-1 mb-1">
-          {workspace ? (
-            <button
-              className={cn(
-                "flex w-full items-center gap-2.5 rounded-lg border border-sidebar-border bg-background px-3 py-2 hover:bg-sidebar-accent/50 transition-colors duration-150 group",
-                isCollapsed && "justify-center px-2",
-              )}
-            >
-              <div className="h-5 w-5 rounded-full bg-primary shrink-0" />
-              <span className="flex-1 text-left text-sm font-medium text-foreground truncate group-data-[collapsible=icon]:hidden">
-                {workspace.name}
-              </span>
-              <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform duration-150 group-hover:scale-110 group-data-[collapsible=icon]:hidden" />
-            </button>
-          ) : (
-            <Skeleton className="h-9 w-full rounded-lg" />
-          )}
+          <WorkspaceSwitcher />
         </div>
 
         {/* Primary nav */}

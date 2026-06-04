@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,24 @@ async function createWorkspace(data: FormData) {
 
 export default function OnboardingPage() {
   const router = useRouter();
+
+  useEffect(() => {
+    const pendingInviteToken = localStorage.getItem("pending_invite_token");
+    if (pendingInviteToken) {
+      router.replace(`/invite/${pendingInviteToken}`);
+      return;
+    }
+
+    fetch("/api/workspace/memberships")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.workspaces?.length > 0) {
+          router.replace("/inbox");
+        }
+      })
+      .catch(() => {});
+  }, [router]);
+
   const [form, setForm] = useState<FormData>({
     name: "",
     industry: "",

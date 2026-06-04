@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackURL = searchParams.get("callbackURL") ?? "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -27,7 +29,7 @@ export default function LoginPage() {
     setLoading(false);
 
     if (data && !authError) {
-      router.push("/");
+      router.push(callbackURL);
     } else {
       setError("Invalid email or password.");
     }
@@ -66,10 +68,21 @@ export default function LoginPage() {
       </form>
       <p className="mt-4 text-sm text-center text-muted-foreground">
         Don&apos;t have an account?{" "}
-        <Link href="/register" className="text-foreground underline">
+        <Link
+          href={callbackURL !== "/" ? `/register?callbackURL=${encodeURIComponent(callbackURL)}` : "/register"}
+          className="text-foreground underline"
+        >
           Create account
         </Link>
       </p>
     </>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

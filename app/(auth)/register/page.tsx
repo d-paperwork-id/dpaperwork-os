@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackURL = searchParams.get("callbackURL") ?? "/onboarding";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -33,11 +35,15 @@ export default function RegisterPage() {
       email,
       password,
       name: email,
+      callbackURL,
     });
     setLoading(false);
 
     if (data && !authError) {
-      router.push("/verify-email");
+      const verifyPath = callbackURL !== "/onboarding"
+        ? `/verify-email?callbackURL=${encodeURIComponent(callbackURL)}`
+        : "/verify-email";
+      router.push(verifyPath);
     } else {
       setError(authError?.message ?? "Registration failed.");
     }
@@ -78,10 +84,21 @@ export default function RegisterPage() {
       </form>
       <p className="mt-4 text-sm text-center text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/login" className="text-foreground underline">
+        <Link
+          href={callbackURL !== "/onboarding" ? `/login?callbackURL=${encodeURIComponent(callbackURL)}` : "/login"}
+          className="text-foreground underline"
+        >
           Sign in
         </Link>
       </p>
     </>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterForm />
+    </Suspense>
   );
 }
