@@ -56,4 +56,4 @@
 - [x] 9.1 Handle network error during streaming — show error banner in thread view with a retry option
 - [x] 9.2 Handle empty agent response or `cannot_complete` — display the agent's message explaining the gap (no special UI treatment needed beyond normal message rendering)
 - [x] 9.3 Verify the Chat sidebar nav item href points to `/chat` (fix `app-sidebar.tsx` if needed)
-- [ ] 9.4 Test: create thread → send message → verify streaming → verify thread title auto-sets → rename thread → delete thread → search thread via ⌘K
+- [x] 9.4 Test: create thread → send message → verify streaming → verify thread title auto-sets → rename thread → delete thread → search thread via ⌘K
