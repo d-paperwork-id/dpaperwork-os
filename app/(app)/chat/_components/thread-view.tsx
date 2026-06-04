@@ -252,7 +252,10 @@ export function ThreadView({ threadId }: ThreadViewProps) {
               ) : (
                 <button
                   className="text-sm font-medium text-foreground truncate hover:text-foreground/80 transition-colors text-left w-full"
-                  onClick={() => { setTitleInput(thread.title); setIsEditingTitle(true); }}
+                  onClick={() => {
+                    setTitleInput(thread.title);
+                    setIsEditingTitle(true);
+                  }}
                 >
                   {thread.title}
                 </button>
@@ -274,7 +277,10 @@ export function ThreadView({ threadId }: ThreadViewProps) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => { setTitleInput(thread.title); setIsEditingTitle(true); }}
+                  onClick={() => {
+                    setTitleInput(thread.title);
+                    setIsEditingTitle(true);
+                  }}
                 >
                   Rename
                 </DropdownMenuItem>
@@ -306,7 +312,7 @@ export function ThreadView({ threadId }: ThreadViewProps) {
                 if (message.role === "user") {
                   return (
                     <Message key={message.id} from="user">
-                      <div className="bg-primary text-primary-foreground rounded-2xl px-4 py-3 text-sm max-w-[80%] ml-auto whitespace-pre-wrap leading-relaxed">
+                      <div className="bg-primary text-primary-foreground rounded-lg px-4 py-3 text-sm max-w-[80%] ml-auto whitespace-pre-wrap leading-relaxed">
                         {message.parts?.map((part, i) => {
                           if (isTextUIPart(part))
                             return <span key={i}>{part.text}</span>;
@@ -329,11 +335,11 @@ export function ThreadView({ threadId }: ThreadViewProps) {
                         .slice(0, 2)
                         .toUpperCase()}
                     </div>
-                    <div className="flex-1 min-w-0 space-y-2">
+                    <div className="flex-1 min-w-0 w-full space-y-2">
                       <span className="text-xs font-medium text-muted-foreground">
                         {AGENT_LABELS[thread.agentId] ?? thread.agentId}
                       </span>
-                      <MessageContent className="bg-muted text-foreground rounded-2xl px-4 py-3 text-sm leading-relaxed">
+                      <MessageContent className="bg-white dark:bg-black shadow-sm text-foreground rounded-lg px-4 py-3 text-sm leading-relaxed">
                         {message.parts?.map((part, i) => {
                           if (isTextUIPart(part)) {
                             return (
