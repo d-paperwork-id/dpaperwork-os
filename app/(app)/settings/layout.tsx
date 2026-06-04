@@ -17,18 +17,20 @@ import { cn } from "@/lib/utils";
 const settingsGroups = [
   {
     label: "Account",
-    items: [
-      { label: "Profile", href: "/settings/profile", icon: User },
-    ],
+    items: [{ label: "Profile", href: "/settings/profile", icon: User }],
   },
   {
     label: "Workspace",
     items: [
-      { label: "General", href: "/settings/workspace/general", icon: Settings2 },
+      {
+        label: "General",
+        href: "/settings/workspace/general",
+        icon: Settings2,
+      },
       { label: "Context", href: "/settings/workspace/context", icon: FileText },
       { label: "Memory", href: "/settings/workspace/memory", icon: Brain },
       { label: "Agents", href: "/settings/agents", icon: Bot },
-      { label: "Team", href: "/settings/team", icon: Users },
+      { label: "Team", href: "/settings/team/members", icon: Users },
       { label: "Billing", href: "/settings/billing", icon: CreditCard },
     ],
   },
@@ -46,7 +48,7 @@ export default function SettingsLayout({
   const activeItem = allItems.find(
     (item) =>
       pathname === item.href ||
-      (item.href !== "/settings" && pathname.startsWith(item.href))
+      (item.href !== "/settings" && pathname.startsWith(item.href)),
   );
 
   return (
@@ -72,7 +74,7 @@ export default function SettingsLayout({
                         "flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm transition-colors duration-150",
                         isActive
                           ? "bg-accent text-foreground font-medium"
-                          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                          : "text-muted-foreground hover:bg-accent hover:text-foreground",
                       )}
                     >
                       <Icon className="w-4 h-4 shrink-0" />
@@ -85,9 +87,7 @@ export default function SettingsLayout({
           ))}
         </aside>
         <div className="flex-1 overflow-auto p-6">
-          <div className={pathname === "/settings/workspace/context" ? "w-full" : "max-w-2xl"}>
-            {children}
-          </div>
+          <div className="w-full">{children}</div>
         </div>
       </div>
     </>

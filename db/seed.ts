@@ -4,6 +4,7 @@ import type { PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
 import type { ExtractTablesWithRelations } from "drizzle-orm";
 import type * as schema from "./schema";
 import {
+  workspaceRoles,
   workspaceAgentConfig,
   userAgentAssignments,
   contextMd,
@@ -20,6 +21,53 @@ type Tx = PgTransaction<
 >;
 
 const AGENTS = ["pm", "chief-of-staff", "executive-assistant"] as const;
+
+export async function seedWorkspaceRoles(
+  tx: Tx,
+  workspaceId: string,
+): Promise<{ adminRoleId: string; memberRoleId: string; viewerRoleId: string }> {
+  const adminRoleId = `rol_${nanoid(16)}`;
+  const memberRoleId = `rol_${nanoid(16)}`;
+  const viewerRoleId = `rol_${nanoid(16)}`;
+
+  await tx.insert(workspaceRoles).values([
+    {
+      id: adminRoleId,
+      workspaceId,
+      name: "Admin",
+      description: "Full access — can manage settings, write data, and view everything.",
+      isSystem: true,
+      canManageSettings: true,
+      canWriteData: true,
+      canViewData: true,
+      position: 0,
+    },
+    {
+      id: memberRoleId,
+      workspaceId,
+      name: "Member",
+      description: "Can write and view data but cannot change workspace settings.",
+      isSystem: true,
+      canManageSettings: false,
+      canWriteData: true,
+      canViewData: true,
+      position: 1,
+    },
+    {
+      id: viewerRoleId,
+      workspaceId,
+      name: "Viewer",
+      description: "Read-only access across the workspace.",
+      isSystem: true,
+      canManageSettings: false,
+      canWriteData: false,
+      canViewData: true,
+      position: 2,
+    },
+  ]);
+
+  return { adminRoleId, memberRoleId, viewerRoleId };
+}
 
 export async function seedWorkspace(
   tx: Tx,

@@ -5,6 +5,7 @@ import { workspaceMembers, workspaces, contextMd, contextMdVersions } from "@/db
 import { eq, and, isNull } from "drizzle-orm";
 import { headers } from "next/headers";
 import { nanoid } from "nanoid";
+import { requireRole } from "@/lib/auth/require-role";
 
 async function getWorkspaceForSession(userId: string) {
   const rows = await db
@@ -61,6 +62,9 @@ export async function PUT(req: NextRequest) {
   if (!workspace) {
     return NextResponse.json({ error: "No workspace found" }, { status: 404 });
   }
+
+  const guardError = await requireRole(session.user.id, workspace.id, "can_manage_settings");
+  if (guardError) return guardError;
 
   const body = await req.json();
   const { content, updatedAt } = body as { content: string; updatedAt: string | null };

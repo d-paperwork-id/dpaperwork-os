@@ -1,4 +1,5 @@
 import {
+  boolean,
   index,
   integer,
   pgTable,
@@ -8,6 +9,31 @@ import {
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { user } from "./auth";
+
+export const workspaceRoles = pgTable(
+  "workspace_roles",
+  {
+    id: text("id").primaryKey(), // rol_...
+    workspaceId: text("workspace_id").notNull(),
+    name: text("name").notNull(),
+    description: text("description"),
+    isSystem: boolean("is_system").notNull().default(false),
+    canManageSettings: boolean("can_manage_settings").notNull().default(false),
+    canWriteData: boolean("can_write_data").notNull().default(true),
+    canViewData: boolean("can_view_data").notNull().default(true),
+    position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    index("workspace_roles_workspace_idx").on(table.workspaceId),
+  ],
+);
 
 export const workspaces = pgTable(
   "workspaces",
@@ -61,9 +87,7 @@ export const workspaceMembers = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id),
-    role: text("role", { enum: ["admin", "member"] })
-      .notNull()
-      .default("member"),
+    roleId: text("role_id").references(() => workspaceRoles.id),
     invitedByUserId: text("invited_by_user_id").references(() => user.id),
     joinedAt: timestamp("joined_at", { withTimezone: true })
       .notNull()

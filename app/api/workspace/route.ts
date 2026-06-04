@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { db } from "@/db/drizzle";
-import { workspaces, workspaceMembers } from "@/db/schema";
+import { workspaces, workspaceMembers, workspaceRoles } from "@/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { headers } from "next/headers";
 import { getWorkspaceForUser } from "@/lib/workspace";
 import { nanoid } from "nanoid";
-import { seedWorkspace } from "@/db/seed";
+import { seedWorkspace, seedWorkspaceRoles } from "@/db/seed";
 
 const createWorkspaceSchema = z.object({
   name: z.string().min(1),
@@ -47,10 +47,11 @@ export async function POST(req: NextRequest) {
   const existing = await db
     .select({ id: workspaceMembers.workspaceId })
     .from(workspaceMembers)
+    .innerJoin(workspaceRoles, eq(workspaceMembers.roleId, workspaceRoles.id))
     .where(
       and(
         eq(workspaceMembers.userId, session.user.id),
-        eq(workspaceMembers.role, "admin"),
+        eq(workspaceRoles.canManageSettings, true),
         isNull(workspaceMembers.deletedAt)
       )
     )
@@ -80,11 +81,13 @@ export async function POST(req: NextRequest) {
       slug: `${slug}-${nanoid(6)}`,
     });
 
+    const { adminRoleId } = await seedWorkspaceRoles(tx, workspaceId);
+
     await tx.insert(workspaceMembers).values({
       id: memberId,
       workspaceId,
       userId: session.user.id,
-      role: "admin",
+      roleId: adminRoleId,
     });
 
     await seedWorkspace(tx, workspaceId, session.user.id);
